@@ -16,7 +16,11 @@ namespace BlastPlayGround
 		/// Gets the list of points defining the PI curve.
 		/// </summary>
 		public List<(double I, double P)> Points { get; private set; }
-		
+
+		/// <summary>Stores either a single PI curve or a collection of PI curves.</summary>
+		/// This list is initialized to contain the current instance for a single curve
+		/// or multiple instances for representing multiple curves. This design allows
+		/// the Intersects method to uniformly handle both single and multiple curve scenarios.
 		private List<PICurve> curves;
 
 		/// <summary>
