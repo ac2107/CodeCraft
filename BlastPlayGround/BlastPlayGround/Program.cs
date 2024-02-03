@@ -1,6 +1,6 @@
 ﻿using BlastPlayGround;
 
-
+// DoLineSegmentsIntersect() usage
 (double, double) A = (0.0, 0.0);
 (double, double) B = (2.0, 2.0);
 (double, double) C = (0.0, 2.0);

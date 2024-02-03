@@ -6,19 +6,33 @@ using System.Threading.Tasks;
 
 namespace BlastPlayGround
 {
+	/// <summary>
+	/// Represents a Pressure-Impulse (PI) curve or a collection of PI curves.
+	/// This class can be used to determine if a given load point intersects any of the PI curves.
+	/// </summary>
 	public class PICurve
 	{
+		/// <summary>
+		/// Gets the list of points defining the PI curve.
+		/// </summary>
 		public List<(double I, double P)> Points { get; private set; }
+		
 		private List<PICurve> curves;
 
-		// Constructor for a single curve
+		/// <summary>
+		/// Initializes a new instance of the PICurve class with a single PI curve.
+		/// </summary>
+		/// <param name="points">The points defining the PI curve.</param>
 		public PICurve(List<(double I, double P)> points)
 		{
 			Points = points ?? throw new ArgumentNullException(nameof(points));
 			curves = new List<PICurve> { this }; // Initialize with this curve
 		}
 
-		// Constructor for multiple curves
+		/// <summary>
+		/// Initializes a new instance of the PICurve class with multiple PI curves.
+		/// </summary>
+		/// <param name="curves">A collection of PICurve instances representing multiple PI curves.</param>
 		public PICurve(List<PICurve> curves)
 		{
 			if (curves == null || !curves.Any())
@@ -28,8 +42,12 @@ namespace BlastPlayGround
 			Points = new List<(double I, double P)>(); // Initialize an empty list for points
 		}
 
-		// Check intersection for either a single curve or multiple curves		      
-
+		/// <summary>
+		/// Checks if the line segment from the origin to the specified load point intersects with any of the PI curves.
+		/// Considers edge cases where the load point's line segment may extend beyond the range of the curve's points.
+		/// </summary>
+		/// <param name="loadPoint">The load point (I, P) to check for intersection.</param>
+		/// <returns>True if there is an intersection with any of the PI curves; otherwise, false.</returns>		      
 		public bool Intersects((double I, double P) loadPoint)
 		{
 			(double, double) origin = (0, 0);
@@ -62,6 +80,11 @@ namespace BlastPlayGround
 			return false; // No intersection found
 		}
 
+		/// <summary>
+		/// Counts the number of PI curves that the line segment from the origin to the specified load point intersects.
+		/// </summary>
+		/// <param name="loadPoint">The load point (I, P) to check for intersection with the PI curves.</param>
+		/// <returns>The count of PI curves that intersect with the line segment from the origin to the load point.</returns>
 		public int CountIntersectingCurves((double I, double P) loadPoint)
 		{
 			int count = 0;
@@ -81,8 +104,19 @@ namespace BlastPlayGround
 
 	}
 
+	/// <summary>
+	/// Provides methods for determining if two line segments intersect.
+	/// </summary>
 	internal class LineSegmentIntersection
 	{
+		/// <summary>
+		/// Checks if two line segments, defined by points A, B and C, D, intersect.
+		/// </summary>
+		/// <param name="A">The start point of the first line segment.</param>
+		/// <param name="B">The end point of the first line segment.</param>
+		/// <param name="C">The start point of the second line segment.</param>
+		/// <param name="D">The end point of the second line segment.</param>
+		/// <returns>True if the line segments intersect; otherwise, false.</returns>
 		internal static bool DoLineSegmentsIntersect((double, double) A, (double, double) B, (double, double) C, (double, double) D)
 		{
 			// Check if the line segments AB and CD intersect
@@ -97,12 +131,19 @@ namespace BlastPlayGround
 			return false; // The line segments do not intersect
 		}
 
+		/// <summary>
+		/// Calculates the orientation of three points in 2D space.
+		/// </summary>
+		/// <param name="P">First point.</param>
+		/// <param name="Q">Second point.</param>
+		/// <param name="R">Third point.</param>
+		/// <returns>0 if collinear, 1 if clockwise, 2 if counterclockwise.</returns>
 		internal static int GetOrientation((double, double) P, (double, double) Q, (double, double) R)
 		{
 			double val = (Q.Item2 - P.Item2) * (R.Item1 - Q.Item1) - (Q.Item1 - P.Item1) * (R.Item2 - Q.Item2);
 
-			if (val == 0) return 0;  // Collinear
-			return (val > 0) ? 1 : 2; // Clockwise or Counterclock wise
+			if (val == 0) return 0;		// Collinear
+			return (val > 0) ? 1 : 2;	// Clockwise or Counterclock wise
 		}
 
 	}
